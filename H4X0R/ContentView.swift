@@ -8,14 +8,27 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+    @ObservedObject var networkManager: NetworkManager
+
+    init(networkManager: NetworkManager = NetworkManager()) {
+        self.networkManager = networkManager
+        Task {
+            networkManager.fetchData()
         }
-        .padding()
+    }
+
+    var body: some View {
+        NavigationView {
+            List(networkManager.posts) { post in
+                NavigationLink(destination: DetailView(url: post.url)) {
+                    HStack {
+                        Text(String(post.points))
+                        Text(post.title)
+                    }
+                }
+            }
+            .navigationBarTitle("H4X0R NEWS")
+        }
     }
 }
 
